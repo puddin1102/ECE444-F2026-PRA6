@@ -39,6 +39,10 @@ def create_app(test_config=None):
     database_url = os.getenv("DATABASE_URL", f"sqlite:///{root / 'flaskr.db'}")
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
+    if database_url.startswith("postgresql://"):
+        database_url = database_url.replace(
+            "postgresql://", "postgresql+psycopg2://", 1
+        )
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY", "local-development-only"),
         USERNAME=os.getenv("ADMIN_USERNAME", "admin"),
