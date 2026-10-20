@@ -1,0 +1,13 @@
+.venv/
+env/
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+instance/
+.env
+.env.*
+!.env.example
+.vercel/
+.DS_Store

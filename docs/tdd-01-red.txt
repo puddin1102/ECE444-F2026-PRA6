@@ -1,0 +1,268 @@
+F.FFFFFFFFFFFFFFFF                                                       [100%]
+=================================== FAILURES ===================================
+__________________________________ test_index __________________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_index(client):
+>       assert client.get("/").status_code == 200
+E       AssertionError: assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = get('/')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_app.py:11: AssertionError
+________________________________ test_empty_db _________________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_empty_db(client):
+>       assert b"No entries yet. Add some!" in client.get("/").data
+E       AssertionError: assert b'No entries yet. Add some!' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+E        +    where <WrapperTestResponse 207 bytes [404 NOT FOUND]> = get('/')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_app.py:21: AssertionError
+_______________________________ test_login_page ________________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_login_page(client):
+>       assert client.get("/login").status_code == 200
+E       AssertionError: assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = get('/login')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_app.py:25: AssertionError
+______________________________ test_login_logout _______________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_login_logout(client):
+        response = client.post(
+            "/login", data={"username": "admin", "password": "admin"},
+            follow_redirects=True,
+        )
+>       assert b"You were logged in" in response.data
+E       AssertionError: assert b'You were logged in' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+
+tests/test_app.py:33: AssertionError
+_______________ test_invalid_login[wrong-admin-Invalid username] _______________
+
+client = <FlaskClient <Flask 'project.app'>>, username = 'wrong'
+password = 'admin', error = b'Invalid username'
+
+    @pytest.mark.parametrize("username,password,error", [
+        ("wrong", "admin", b"Invalid username"),
+        ("admin", "wrong", b"Invalid password"),
+        ("", "", b"Invalid username"),
+    ])
+    def test_invalid_login(client, username, password, error):
+        response = client.post("/login", data={"username": username, "password": password})
+>       assert error in response.data
+E       AssertionError: assert b'Invalid username' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+
+tests/test_app.py:48: AssertionError
+_______________ test_invalid_login[admin-wrong-Invalid password] _______________
+
+client = <FlaskClient <Flask 'project.app'>>, username = 'admin'
+password = 'wrong', error = b'Invalid password'
+
+    @pytest.mark.parametrize("username,password,error", [
+        ("wrong", "admin", b"Invalid username"),
+        ("admin", "wrong", b"Invalid password"),
+        ("", "", b"Invalid username"),
+    ])
+    def test_invalid_login(client, username, password, error):
+        response = client.post("/login", data={"username": username, "password": password})
+>       assert error in response.data
+E       AssertionError: assert b'Invalid password' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+
+tests/test_app.py:48: AssertionError
+____________________ test_invalid_login[--Invalid username] ____________________
+
+client = <FlaskClient <Flask 'project.app'>>, username = '', password = ''
+error = b'Invalid username'
+
+    @pytest.mark.parametrize("username,password,error", [
+        ("wrong", "admin", b"Invalid username"),
+        ("admin", "wrong", b"Invalid password"),
+        ("", "", b"Invalid username"),
+    ])
+    def test_invalid_login(client, username, password, error):
+        response = client.post("/login", data={"username": username, "password": password})
+>       assert error in response.data
+E       AssertionError: assert b'Invalid username' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+
+tests/test_app.py:48: AssertionError
+________________________________ test_messages _________________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+
+    def test_messages(logged_in, app):
+        response = logged_in.post(
+            "/add", data={"title": "<Hello>", "text": "<strong>HTML</strong> allowed here"},
+            follow_redirects=True,
+        )
+>       assert b"New entry was successfully posted" in response.data
+E       AssertionError: assert b'New entry was successfully posted' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+
+tests/test_app.py:58: AssertionError
+___________________________ test_post_requires_login ___________________________
+
+client = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+
+    def test_post_requires_login(client, app):
+>       assert client.post("/add", data={"title": "Blocked", "text": "No"}).status_code == 401
+E       AssertionError: assert 404 == 401
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = post('/add', data={'title': 'Blocked', 'text': 'No'})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/test_app.py:66: AssertionError
+_______________________ test_reject_invalid_post[data0] ________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+data = {}
+
+    @pytest.mark.parametrize("data", [
+        {}, {"title": "", "text": "Body"}, {"title": "Title", "text": "   "},
+        {"title": "x" * 201, "text": "Body"},
+    ])
+    def test_reject_invalid_post(logged_in, app, data):
+>       assert logged_in.post("/add", data=data).status_code == 400
+E       AssertionError: assert 404 == 400
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = post('/add', data={})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/test_app.py:76: AssertionError
+_______________________ test_reject_invalid_post[data1] ________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+data = {'title': '', 'text': 'Body'}
+
+    @pytest.mark.parametrize("data", [
+        {}, {"title": "", "text": "Body"}, {"title": "Title", "text": "   "},
+        {"title": "x" * 201, "text": "Body"},
+    ])
+    def test_reject_invalid_post(logged_in, app, data):
+>       assert logged_in.post("/add", data=data).status_code == 400
+E       AssertionError: assert 404 == 400
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = post('/add', data={'title': '', 'text': 'Body'})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/test_app.py:76: AssertionError
+_______________________ test_reject_invalid_post[data2] ________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+data = {'title': 'Title', 'text': '   '}
+
+    @pytest.mark.parametrize("data", [
+        {}, {"title": "", "text": "Body"}, {"title": "Title", "text": "   "},
+        {"title": "x" * 201, "text": "Body"},
+    ])
+    def test_reject_invalid_post(logged_in, app, data):
+>       assert logged_in.post("/add", data=data).status_code == 400
+E       AssertionError: assert 404 == 400
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = post('/add', data={'title': 'Title', 'text': '   '})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/test_app.py:76: AssertionError
+_______________________ test_reject_invalid_post[data3] ________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+data = {'title': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'text': 'Body'}
+
+    @pytest.mark.parametrize("data", [
+        {}, {"title": "", "text": "Body"}, {"title": "Title", "text": "   "},
+        {"title": "x" * 201, "text": "Body"},
+    ])
+    def test_reject_invalid_post(logged_in, app, data):
+>       assert logged_in.post("/add", data=data).status_code == 400
+E       AssertionError: assert 404 == 400
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = post('/add', data={'title': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'text': 'Body'})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/test_app.py:76: AssertionError
+____________________________ test_newest_post_first ____________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>
+
+    def test_newest_post_first(logged_in):
+        for title in ["Older", "Newer"]:
+            logged_in.post("/add", data={"title": title, "text": "Body"})
+        html = logged_in.get("/").data
+>       assert html.index(b"Newer") < html.index(b"Older")
+               ^^^^^^^^^^^^^^^^^^^^
+E       ValueError: subsection not found
+
+tests/test_app.py:85: ValueError
+_____________________________ test_delete_message ______________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+
+    def test_delete_message(logged_in, app):
+        logged_in.post("/add", data={"title": "Delete me", "text": "Body"})
+        with app.app_context():
+            post_id = db.session.scalar(db.select(Post.id))
+        response = logged_in.get(f"/delete/{post_id}")
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/test_app.py:93: AssertionError
+_______________________ test_delete_nonexistent_message ________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>
+
+    def test_delete_nonexistent_message(logged_in):
+        response = logged_in.get("/delete/999999")
+        assert response.status_code == 404
+>       assert response.json["status"] == 0
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_app.py:102: TypeError
+_____________________________ test_html_sanitized ______________________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>
+
+    def test_html_sanitized(logged_in):
+        logged_in.post("/add", data={
+            "title": "Safe title", "text": '<strong>OK</strong><script>alert(1)</script><img src=x onerror=alert(2)>',
+        })
+        html = logged_in.get("/").data
+>       assert b"<strong>OK</strong>" in html
+E       AssertionError: assert b'<strong>OK</strong>' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+
+tests/test_app.py:110: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_app.py::test_index - AssertionError: assert 404 == 200
+FAILED tests/test_app.py::test_empty_db - AssertionError: assert b'No entries...
+FAILED tests/test_app.py::test_login_page - AssertionError: assert 404 == 200
+FAILED tests/test_app.py::test_login_logout - AssertionError: assert b'You we...
+FAILED tests/test_app.py::test_invalid_login[wrong-admin-Invalid username] - ...
+FAILED tests/test_app.py::test_invalid_login[admin-wrong-Invalid password] - ...
+FAILED tests/test_app.py::test_invalid_login[--Invalid username] - AssertionE...
+FAILED tests/test_app.py::test_messages - AssertionError: assert b'New entry ...
+FAILED tests/test_app.py::test_post_requires_login - AssertionError: assert 4...
+FAILED tests/test_app.py::test_reject_invalid_post[data0] - AssertionError: a...
+FAILED tests/test_app.py::test_reject_invalid_post[data1] - AssertionError: a...
+FAILED tests/test_app.py::test_reject_invalid_post[data2] - AssertionError: a...
+FAILED tests/test_app.py::test_reject_invalid_post[data3] - AssertionError: a...
+FAILED tests/test_app.py::test_newest_post_first - ValueError: subsection not...
+FAILED tests/test_app.py::test_delete_message - assert 404 == 200
+FAILED tests/test_app.py::test_delete_nonexistent_message - TypeError: 'NoneT...
+FAILED tests/test_app.py::test_html_sanitized - AssertionError: assert b'<str...
+17 failed, 1 passed in 0.85s

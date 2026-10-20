@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.black]
+target-version = ["py312"]
+
+[tool.coverage.run]
+source = ["project"]
