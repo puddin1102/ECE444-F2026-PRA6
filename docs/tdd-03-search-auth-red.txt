@@ -1,0 +1,155 @@
+FFFFFFFFFF                                                               [100%]
+=================================== FAILURES ===================================
+________________________ test_search_page_without_query ________________________
+
+client = <FlaskClient <Flask 'project.app'>>, posts = None
+
+    def test_search_page_without_query(client, posts):
+        response = client.get("/search/")
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/test_search_and_auth.py:21: AssertionError
+____ test_search_title_and_body_case_insensitive[flask-expected0-excluded0] ____
+
+client = <FlaskClient <Flask 'project.app'>>, posts = None, query = 'flask'
+expected = [b'Flask tips', b'Database notes'], excluded = [b'Other idea']
+
+    @pytest.mark.parametrize("query,expected,excluded", [
+        ("flask", [b"Flask tips", b"Database notes"], [b"Other idea"]),
+        ("TEST-DRIVEN", [b"Flask tips"], [b"Database notes", b"Other idea"]),
+        ("  postgres  ", [b"Database notes"], [b"Flask tips", b"Other idea"]),
+    ])
+    def test_search_title_and_body_case_insensitive(client, posts, query, expected, excluded):
+        response = client.get("/search/", query_string={"query": query})
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/test_search_and_auth.py:33: AssertionError
+_ test_search_title_and_body_case_insensitive[TEST-DRIVEN-expected1-excluded1] _
+
+client = <FlaskClient <Flask 'project.app'>>, posts = None
+query = 'TEST-DRIVEN', expected = [b'Flask tips']
+excluded = [b'Database notes', b'Other idea']
+
+    @pytest.mark.parametrize("query,expected,excluded", [
+        ("flask", [b"Flask tips", b"Database notes"], [b"Other idea"]),
+        ("TEST-DRIVEN", [b"Flask tips"], [b"Database notes", b"Other idea"]),
+        ("  postgres  ", [b"Database notes"], [b"Flask tips", b"Other idea"]),
+    ])
+    def test_search_title_and_body_case_insensitive(client, posts, query, expected, excluded):
+        response = client.get("/search/", query_string={"query": query})
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/test_search_and_auth.py:33: AssertionError
+_ test_search_title_and_body_case_insensitive[  postgres  -expected2-excluded2] _
+
+client = <FlaskClient <Flask 'project.app'>>, posts = None
+query = '  postgres  ', expected = [b'Database notes']
+excluded = [b'Flask tips', b'Other idea']
+
+    @pytest.mark.parametrize("query,expected,excluded", [
+        ("flask", [b"Flask tips", b"Database notes"], [b"Other idea"]),
+        ("TEST-DRIVEN", [b"Flask tips"], [b"Database notes", b"Other idea"]),
+        ("  postgres  ", [b"Database notes"], [b"Flask tips", b"Other idea"]),
+    ])
+    def test_search_title_and_body_case_insensitive(client, posts, query, expected, excluded):
+        response = client.get("/search/", query_string={"query": query})
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/test_search_and_auth.py:33: AssertionError
+____________________________ test_search_no_matches ____________________________
+
+client = <FlaskClient <Flask 'project.app'>>, posts = None
+
+    def test_search_no_matches(client, posts):
+>       assert b"No matching entries." in client.get("/search/?query=missing").data
+E       AssertionError: assert b'No matching entries.' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+E        +    where <WrapperTestResponse 207 bytes [404 NOT FOUND]> = get('/search/?query=missing')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_search_and_auth.py:41: AssertionError
+_____________________ test_search_treats_wildcards_as_text _____________________
+
+client = <FlaskClient <Flask 'project.app'>>, posts = None
+
+    def test_search_treats_wildcards_as_text(client, posts):
+>       assert b"No matching entries." in client.get("/search/?query=%25").data
+E       AssertionError: assert b'No matching entries.' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+E        +    where <WrapperTestResponse 207 bytes [404 NOT FOUND]> = get('/search/?query=%25')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_search_and_auth.py:45: AssertionError
+__________________________ test_search_escapes_query ___________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_search_escapes_query(client):
+        html = client.get("/search/", query_string={"query": '<script>alert("x")</script>'}).data
+        assert b"<script>alert(" not in html
+>       assert b"&lt;script&gt;" in html
+E       AssertionError: assert b'&lt;script&gt;' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+
+tests/test_search_and_auth.py:51: AssertionError
+_______________ test_anonymous_delete_denied_and_post_preserved ________________
+
+client = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+posts = None
+
+    def test_anonymous_delete_denied_and_post_preserved(client, app, posts):
+        with app.app_context():
+            post_id = db.session.scalar(db.select(Post.id))
+        response = client.get(f"/delete/{post_id}")
+>       assert response.status_code == 401
+E       assert 200 == 401
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+
+tests/test_search_and_auth.py:58: AssertionError
+______________________ test_logout_revokes_delete_access _______________________
+
+logged_in = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+posts = None
+
+    def test_logout_revokes_delete_access(logged_in, app, posts):
+        with app.app_context():
+            post_id = db.session.scalar(db.select(Post.id))
+        logged_in.get("/logout")
+>       assert logged_in.get(f"/delete/{post_id}").status_code == 401
+E       AssertionError: assert 200 == 401
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+E        +    where <WrapperTestResponse streamed [200 OK]> = get('/delete/1')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_search_and_auth.py:68: AssertionError
+_______________ test_anonymous_missing_post_still_requires_login _______________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_anonymous_missing_post_still_requires_login(client):
+>       assert client.get("/delete/999999").status_code == 401
+E       AssertionError: assert 404 == 401
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = get('/delete/999999')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/test_search_and_auth.py:74: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_search_and_auth.py::test_search_page_without_query - assert...
+FAILED tests/test_search_and_auth.py::test_search_title_and_body_case_insensitive[flask-expected0-excluded0]
+FAILED tests/test_search_and_auth.py::test_search_title_and_body_case_insensitive[TEST-DRIVEN-expected1-excluded1]
+FAILED tests/test_search_and_auth.py::test_search_title_and_body_case_insensitive[  postgres  -expected2-excluded2]
+FAILED tests/test_search_and_auth.py::test_search_no_matches - AssertionError...
+FAILED tests/test_search_and_auth.py::test_search_treats_wildcards_as_text - ...
+FAILED tests/test_search_and_auth.py::test_search_escapes_query - AssertionEr...
+FAILED tests/test_search_and_auth.py::test_anonymous_delete_denied_and_post_preserved
+FAILED tests/test_search_and_auth.py::test_logout_revokes_delete_access - Ass...
+FAILED tests/test_search_and_auth.py::test_anonymous_missing_post_still_requires_login
+10 failed in 0.26s
