@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+<p class="eyebrow">THE SHARED NOTEBOOK</p>
+<h1>Small thoughts.<br>Room to grow.</h1>
+<p class="intro">Write something worth sharing. Find an idea worth keeping.</p>
+{% if session.logged_in %}
+<section class="compose card mb-5"><div class="card-body">
+  <h2>Write a post</h2>
+  <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
+    <label for="title" class="form-label">Title</label>
+    <input id="title" name="title" maxlength="200" class="form-control mb-3" required>
+    <label for="text" class="form-label">Text</label>
+    <textarea id="text" name="text" rows="4" class="form-control mb-3" required></textarea>
+    <p class="form-text">Basic formatting such as &lt;strong&gt; and &lt;em&gt; is supported.</p>
+    <button class="btn btn-dark" type="submit">Share</button>
+  </form>
+</div></section>
+{% else %}<p class="mb-5"><a href="{{ url_for('login') }}">Log in to share a post</a></p>{% endif %}
+<h2 class="section-label">Latest entries</h2>
+{% include "_entries.html" %}
+{% endblock %}

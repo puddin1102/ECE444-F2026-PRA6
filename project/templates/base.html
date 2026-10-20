@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Flaskr{% endblock %} · ECE444</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='static/style.css') }}" rel="stylesheet">
+</head>
+<body>
+  <header class="container site-header">
+    <a class="brand" href="{{ url_for('index') }}">Flaskr<span> / ECE444</span></a>
+    <nav aria-label="Main navigation">
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="/search/">Search</a>
+      {% if session.logged_in %}<a href="{{ url_for('logout') }}">Log out</a>
+      {% else %}<a href="{{ url_for('login') }}">Log in</a>{% endif %}
+    </nav>
+  </header>
+  <main class="container main-content">
+    {% for message in get_flashed_messages() %}<div class="alert alert-success" role="status">{{ message }}</div>{% endfor %}
+    {% block body %}{% endblock %}
+  </main>
+  <footer class="container">A small place for ideas. Built with Flask.</footer>
+  <script src="{{ url_for('static', filename='static/main.js') }}" defer></script>
+</body>
+</html>

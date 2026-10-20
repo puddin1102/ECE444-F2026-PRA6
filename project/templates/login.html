@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block body %}
+<p class="eyebrow">WELCOME BACK</p><h1>Log in.</h1>
+<p class="intro">Your next idea starts here.</p>
+{% if error %}<p class="alert alert-danger" role="alert"><strong>Error:</strong> {{ error }}</p>{% endif %}
+<form action="{{ url_for('login') }}" method="post" class="login-form">
+  <label for="username" class="form-label">Username</label>
+  <input id="username" name="username" autocomplete="username" class="form-control mb-3" required>
+  <label for="password" class="form-label">Password</label>
+  <input id="password" name="password" type="password" autocomplete="current-password" class="form-control mb-4" required>
+  <button class="btn btn-dark" type="submit">Log in</button>
+</form>
+{% endblock %}

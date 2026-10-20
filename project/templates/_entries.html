@@ -1,0 +1,14 @@
+<ul class="entries list-unstyled">
+{% for entry in entries %}
+  <li class="entry card mb-3" data-post-id="{{ entry.id }}">
+    <div class="card-body">
+      <div class="post-heading"><h2 id="{{ entry.id }}">{{ entry.title }}</h2>
+      {% if session.logged_in %}<button class="btn btn-sm btn-outline-danger delete-post" type="button" data-delete-url="{{ url_for('delete_entry', post_id=entry.id) }}" aria-label="Delete {{ entry.title }}">Delete</button>{% endif %}</div>
+      <div class="post-text">{{ entry.text|safe_post|safe }}</div>
+    </div>
+  </li>
+{% else %}
+  <li class="empty-state">{{ empty_message|default('No entries yet. Add some!') }}</li>
+{% endfor %}
+</ul>
+<p id="delete-error" class="text-danger" role="alert" hidden></p>
