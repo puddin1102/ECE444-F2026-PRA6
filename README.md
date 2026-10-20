@@ -1,5 +1,9 @@
 # ECE444 PRA6: Flaskr, TDD and deployment
 
+**Live app:** https://ece444-pra6.vercel.app/
+
+**Repository:** https://github.com/puddin1102/ECE444-F2026-PRA6 (private; give your TA access before submission).
+
 A Flask mini-blog following the [course tutorial](https://github.com/shuruizUofT/flaskr-tdd/blob/main/README.md), with SQLite for local development and Postgres for deployment. Hosting uses Vercel, which the PRA handout permits as an alternative to Render web hosting.
 
 ## Run locally
@@ -22,9 +26,9 @@ python -m black --check .
 python -m flake8 .
 ```
 
-28 tests cover the database, empty state, login/logout, invalid credentials, posting, formatting, validation, order, deletion, search, and authorization. Every test creates a separate temporary SQLite database. The test suite does not create or drop production tables.
+30 tests cover the database, empty state, login/logout, invalid credentials, posting, formatting, validation, order, deletion, search, and authorization. Every test creates a separate temporary SQLite database. The test suite does not create or drop production tables.
 
-Git history records two actual red/green cycles. Logs are in `docs/tdd-01-red.txt` (17 failures), `docs/tdd-02-green.txt` (18 passed), `docs/tdd-03-search-auth-red.txt` (10 failures), and `docs/tdd-04-final-green.txt` (28 passed, 93% statement coverage). Formatting and shared templates/decorators provide the refactoring step.
+Git history records three actual red/green cycles. Logs are in `docs/tdd-01-red.txt` (17 failures), `docs/tdd-02-green.txt` (18 passed), `docs/tdd-03-search-auth-red.txt` (10 failures), and `docs/tdd-04-final-green.txt` (28 passed, 93% statement coverage). A deployment regression then exposed the Postgres driver mismatch: `docs/tdd-05-postgres-red.txt` records two failing tests and `docs/tdd-06-postgres-green.txt` records the final 30-test run with 95% statement coverage. Formatting and shared templates/decorators provide the refactoring step.
 
 ## Features and course mapping
 
@@ -44,7 +48,7 @@ The final project uses SQLAlchemy instead of retaining the earlier tutorial's ra
 
 ## Deployment: Vercel + Render Postgres
 
-1. Create a **Free** Postgres database in Render using your UofT account.
+1. Create a **Free** Postgres database in Render using your UofT account. The database used here expires on **November 18, 2026**; keep it available for grading.
 2. Copy its **External Database URL**. Vercel cannot use Render's private/internal hostname.
 3. Import this repository into Vercel. The root `app.py` exports the Flask app; assets live in `public/`.
 4. Set Vercel environment variables for the Production environment:
@@ -56,7 +60,9 @@ The final project uses SQLAlchemy instead of retaining the earlier tutorial's ra
 6. Visit the live app, log in, create a post, search its title and body, log out, and confirm deletion is denied. Log back in and delete a post with the Delete button.
 7. Refresh the page and check from another browser session to verify persistence.
 
-Preview environments must have their own database and credentials if enabled. The app refuses Vercel startup without Postgres, a secret, and a password. Local SQLite is not suitable for persistent data on Vercel.
+Preview environments must have their own database and credentials if enabled. This project was deployed through the Vercel CLI. GitHub Actions runs on pushes; automatic Vercel deployment from Git is not connected. To redeploy changes, run `vercel deploy --prod` from the repository after signing in.
+
+The app refuses Vercel startup without Postgres, a secret, and a password. Local SQLite is not suitable for persistent data on Vercel.
 
 Official references: [Vercel Flask](https://vercel.com/docs/frameworks/backend/flask), [Render Postgres](https://render.com/docs/postgresql-creating-connecting).
 
@@ -66,7 +72,7 @@ Read [the explanation and demo guide](docs/TA-GUIDE.md). The handout assigns 2/5
 
 - Run the tests and demonstrate the deployed app to your TA during your assigned PRA.
 - Submit **your GitHub repository URL** to Quercus. A live Vercel URL alone is not the required submission.
-- Include the live app link in this README once deployed. Give the TA the login credentials privately.
+- The live app link is at the top of this README. Give the TA the login credentials privately and ensure they can open this private repository.
 - In-person attendance and TA evaluation before the session ends are required by the handout.
 
 ## Scope

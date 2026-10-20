@@ -1,0 +1,17 @@
+Live verification: https://ece444-pra6.vercel.app
+
+PASS Public home page and empty database render
+PASS Static asset /static/style.css
+PASS Static asset /static/main.js
+PASS Anonymous posting denied
+PASS Invalid login rejected
+PASS Production admin login succeeds
+PASS Post saved in production database
+PASS Saved post has a database ID
+PASS Post persists for an independent unauthenticated browser session
+PASS Case-insensitive body search on Postgres
+PASS Anonymous deletion returns 401 JSON
+PASS Denied deletion preserves database row
+PASS Logout revokes deletion access
+PASS Authenticated deletion succeeds
+PASS Test post deletion persists; production test data cleaned up

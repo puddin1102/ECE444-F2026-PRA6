@@ -2,10 +2,10 @@
 
 ## Automated
 
-- Local suite: 28 passed; 93% Python statement coverage.
+- Local suite: 30 passed; 95% Python statement coverage.
 - Black formatting check: passed.
 - Flake8: passed.
-- GitHub Actions on initial push: passed. [Run](https://github.com/puddin1102/ECE444-F2026-PRA6/actions/runs/39367105685).
+- GitHub Actions on initial and final implementation pushes: passed. [Run](https://github.com/puddin1102/ECE444-F2026-PRA6/actions/runs/39368317277).
 
 ## Local browser
 
@@ -22,6 +22,6 @@ Verified in a clean browser session:
 - GitHub repository created as private: https://github.com/puddin1102/ECE444-F2026-PRA6.
 - Render Postgres `ece444-pra6-db` created using the Free plan and reported Available.
 - Render reports an expiration date of November 18, 2026. Ensure the database remains available for grading.
-- Vercel deployment verification is pending account reconnection and database environment setup.
+- Vercel production deployment is READY at https://ece444-pra6.vercel.app/.
 
-Do not treat local tests as proof of a successful live deployment. Update this record after testing the live URL.
+Live HTTP verification is recorded in `live-smoke-test.txt`: login, invalid credentials, protected posting, persistent Postgres data across separate cookie sessions, case-insensitive search, protected deletion, logout, authenticated deletion, and static asset delivery. Test-created data was removed after verification.

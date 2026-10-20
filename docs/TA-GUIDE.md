@@ -10,7 +10,7 @@ Flask handles HTTP requests. Routes in `project/app.py` authenticate the admin a
 2. **Green:** Add enough implementation to satisfy the test.
 3. **Refactor:** Improve structure while preserving behavior, then rerun all tests.
 
-This repository first defined blog tests, ran them (17 failed, 1 database test passed), implemented the blog (18 passed), then defined search and access tests (10 failed) before implementing those features (28 passed total). Logs are saved under `docs/`; the commit history preserves those stages. The `login_required` decorator replaces repeated login checks; base and partial templates remove duplicated HTML.
+This repository first defined blog tests, ran them (17 failed, 1 database test passed), implemented the blog (18 passed), then defined search and access tests (10 failed) before implementing those features (28 passed total). A real cloud build then revealed a Postgres driver mismatch; two additional tests reproduced it before the fix, bringing the suite to 30 passing tests. Logs are saved under `docs/`; the commit history preserves those stages. The `login_required` decorator replaces repeated login checks; base and partial templates remove duplicated HTML.
 
 ## How the tests work
 
@@ -30,6 +30,7 @@ This repository first defined blog tests, ran them (17 failed, 1 database test p
 | `test_newest_post_first` | Two posts appear in descending ID order. |
 | `test_delete_message` | An existing post is deleted and JSON reports success. |
 | `test_delete_nonexistent_message` | A missing row produces 404 instead of falsely reporting success. |
+| `test_postgres_selects_installed_psycopg2_driver` | Both Postgres URL schemes select the installed psycopg2 adapter and NullPool without opening a network connection. These tests reproduce a real deployment failure. |
 | `test_html_sanitized` | Basic bold formatting survives, while script tags and event handlers cannot run. |
 | `test_search_page_without_query` | A search page loads before input; it does not dump all posts. |
 | `test_search_title_and_body_case_insensitive` | Student-designed cases match titles or body text, ignore case and trim spaces, while excluding unrelated posts. |
@@ -51,7 +52,7 @@ The tests combine unit-style checks with route/database integration tests. They 
 - **HTML:** Jinja escapes a title/query. Body content passes through an allowlist sanitizer before the template marks it safe.
 - **JavaScript:** The Delete button triggers `fetch`; the JSON result and HTTP status determine success. A network/authentication failure shows a visible message and re-enables the button.
 - **Deployment:** Vercel runs application code; Render stores persistent Postgres data. An external URL is required because Vercel is outside Render's private network. `.env` and Vercel variables keep secrets out of Git.
-- **Coverage:** The saved run measures 93% of Python statements. Coverage shows what executed, not whether every important behavior is correct; assertions and edge cases matter more than the percentage.
+- **Coverage:** The saved run measures 95% of Python statements. Coverage shows what executed, not whether every important behavior is correct; assertions and edge cases matter more than the percentage.
 
 ## Five-minute demo
 
