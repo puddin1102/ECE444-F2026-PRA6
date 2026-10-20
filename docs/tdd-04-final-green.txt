@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.13, pytest-9.1.1, pluggy-1.7.0
+rootdir: /Users/christinazhang/Documents/Codex/2026-10-19/read/outputs/ece444-pra6
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, platformdirs-4.13.5
+collected 28 items
+
+tests/test_app.py ..................                                     [ 64%]
+tests/test_search_and_auth.py ..........                                 [100%]
+
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.13.13-final-0 _______________
+
+Name                    Stmts   Miss  Cover   Missing
+-----------------------------------------------------
+project/__init__.py         0      0   100%
+project/app.py             89      6    93%   41, 56-59, 62
+project/extensions.py       2      0   100%
+project/models.py           7      1    86%   10
+-----------------------------------------------------
+TOTAL                      98      7    93%
+============================== 28 passed in 0.76s ==============================

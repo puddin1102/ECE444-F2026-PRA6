@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block body %}
+<p class="eyebrow">FIND AN IDEA</p><h1>Search posts.</h1>
+<p class="intro">Look through titles and text. Search ignores letter case.</p>
+<form action="{{ url_for('search') }}" method="get" class="mb-5">
+  <label for="query" class="form-label">Search</label>
+  <div class="input-group"><input id="query" type="search" name="query" value="{{ query }}" class="form-control"><button class="btn btn-dark" type="submit">Search</button></div>
+</form>
+{% if query %}
+<h2 class="section-label">Results for “{{ query }}”</h2>
+{% set empty_message = 'No matching entries.' %}
+{% include "_entries.html" %}
+{% else %}<p>Enter a word or phrase to find a post.</p>{% endif %}
+{% endblock %}

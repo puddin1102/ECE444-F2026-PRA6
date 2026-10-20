@@ -1,4 +1,5 @@
 """Additional tests designed for the tutorial's Search and Login Required tasks."""
+
 import pytest
 
 from project.extensions import db
@@ -8,11 +9,13 @@ from project.models import Post
 @pytest.fixture
 def posts(app):
     with app.app_context():
-        db.session.add_all([
-            Post(title="Flask tips", text="Test-driven development"),
-            Post(title="Database notes", text="Postgres works with FLASK"),
-            Post(title="Other idea", text="Unrelated content"),
-        ])
+        db.session.add_all(
+            [
+                Post(title="Flask tips", text="Test-driven development"),
+                Post(title="Database notes", text="Postgres works with FLASK"),
+                Post(title="Other idea", text="Unrelated content"),
+            ]
+        )
         db.session.commit()
 
 
@@ -23,12 +26,17 @@ def test_search_page_without_query(client, posts):
     assert b"Flask tips" not in response.data
 
 
-@pytest.mark.parametrize("query,expected,excluded", [
-    ("flask", [b"Flask tips", b"Database notes"], [b"Other idea"]),
-    ("TEST-DRIVEN", [b"Flask tips"], [b"Database notes", b"Other idea"]),
-    ("  postgres  ", [b"Database notes"], [b"Flask tips", b"Other idea"]),
-])
-def test_search_title_and_body_case_insensitive(client, posts, query, expected, excluded):
+@pytest.mark.parametrize(
+    "query,expected,excluded",
+    [
+        ("flask", [b"Flask tips", b"Database notes"], [b"Other idea"]),
+        ("TEST-DRIVEN", [b"Flask tips"], [b"Database notes", b"Other idea"]),
+        ("  postgres  ", [b"Database notes"], [b"Flask tips", b"Other idea"]),
+    ],
+)
+def test_search_title_and_body_case_insensitive(
+    client, posts, query, expected, excluded
+):
     response = client.get("/search/", query_string={"query": query})
     assert response.status_code == 200
     for title in expected:
@@ -46,7 +54,9 @@ def test_search_treats_wildcards_as_text(client, posts):
 
 
 def test_search_escapes_query(client):
-    html = client.get("/search/", query_string={"query": '<script>alert("x")</script>'}).data
+    html = client.get(
+        "/search/", query_string={"query": '<script>alert("x")</script>'}
+    ).data
     assert b"<script>alert(" not in html
     assert b"&lt;script&gt;" in html
 

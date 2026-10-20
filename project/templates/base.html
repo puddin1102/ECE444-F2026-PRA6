@@ -12,7 +12,7 @@
     <a class="brand" href="{{ url_for('index') }}">Flaskr<span> / ECE444</span></a>
     <nav aria-label="Main navigation">
       <a href="{{ url_for('index') }}">Home</a>
-      <a href="/search/">Search</a>
+      <a href="{{ url_for('search') }}">Search</a>
       {% if session.logged_in %}<a href="{{ url_for('logout') }}">Log out</a>
       {% else %}<a href="{{ url_for('login') }}">Log in</a>{% endif %}
     </nav>

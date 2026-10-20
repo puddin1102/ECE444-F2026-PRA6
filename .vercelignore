@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+.venv
+tests
+docs
+.github
+.coverage
+*.db
+__pycache__
+requirements-dev.txt

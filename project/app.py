@@ -1,15 +1,35 @@
 import os
+from functools import wraps
 from pathlib import Path
 
 import bleach
 from dotenv import load_dotenv
 from flask import (
-    Flask, flash, jsonify, redirect, render_template, request, session, url_for,
+    Flask,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
 from sqlalchemy.pool import NullPool
 
 from project.extensions import db
 from project.models import Post
+
+
+def login_required(view):
+    """Protect a view while preserving its name for Flask's URL routing."""
+
+    @wraps(view)
+    def decorated(*args, **kwargs):
+        if not session.get("logged_in"):
+            return jsonify(status=0, message="Please log in."), 401
+        return view(*args, **kwargs)
+
+    return decorated
 
 
 def create_app(test_config=None):
@@ -38,7 +58,7 @@ def create_app(test_config=None):
         if not os.getenv("SECRET_KEY") or not os.getenv("ADMIN_PASSWORD"):
             raise RuntimeError("Set SECRET_KEY and ADMIN_PASSWORD in Vercel.")
     if app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgresql"):
-        # Supabase transaction pooling already manages connections server-side.
+        # Avoid retaining idle DB connections across serverless invocations.
         app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
             "poolclass": NullPool,
             "connect_args": {"sslmode": "require", "connect_timeout": 10},
@@ -48,7 +68,12 @@ def create_app(test_config=None):
     @app.template_filter("safe_post")
     def safe_post(text):
         # Keep the tutorial's formatting feature without allowing scripts/events.
-        return bleach.clean(text, tags={"p", "br", "strong", "em", "b", "i", "ul", "ol", "li"}, attributes={}, strip=True)
+        return bleach.clean(
+            text,
+            tags={"p", "br", "strong", "em", "b", "i", "ul", "ol", "li"},
+            attributes={},
+            strip=True,
+        )
 
     @app.get("/")
     def index():
@@ -77,19 +102,25 @@ def create_app(test_config=None):
         return redirect(url_for("index"))
 
     @app.post("/add")
+    @login_required
     def add_entry():
-        if not session.get("logged_in"):
-            return jsonify(status=0, message="Please log in."), 401
         title = request.form.get("title", "").strip()
         text = request.form.get("text", "").strip()
         if not title or not text or len(title) > 200:
-            return render_template("error.html", message="Enter a title (1-200 characters) and post text."), 400
+            return (
+                render_template(
+                    "error.html",
+                    message="Enter a title (1-200 characters) and post text.",
+                ),
+                400,
+            )
         db.session.add(Post(title=title, text=text))
         db.session.commit()
         flash("New entry was successfully posted")
         return redirect(url_for("index"))
 
     @app.get("/delete/<int:post_id>")
+    @login_required
     def delete_entry(post_id):
         post = db.session.get(Post, post_id)
         if post is None:
@@ -98,5 +129,23 @@ def create_app(test_config=None):
         db.session.commit()
         flash("The entry was deleted.")
         return jsonify(status=1, message="Post Deleted")
+
+    @app.get("/search/")
+    def search():
+        query = request.args.get("query", "").strip()
+        entries = []
+        if query:
+            statement = (
+                db.select(Post)
+                .where(
+                    db.or_(
+                        Post.title.icontains(query, autoescape=True),
+                        Post.text.icontains(query, autoescape=True),
+                    )
+                )
+                .order_by(Post.id.desc())
+            )
+            entries = db.session.scalars(statement).all()
+        return render_template("search.html", query=query, entries=entries)
 
     return app

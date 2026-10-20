@@ -27,7 +27,8 @@ def test_login_page(client):
 
 def test_login_logout(client):
     response = client.post(
-        "/login", data={"username": "admin", "password": "admin"},
+        "/login",
+        data={"username": "admin", "password": "admin"},
         follow_redirects=True,
     )
     assert b"You were logged in" in response.data
@@ -38,11 +39,14 @@ def test_login_logout(client):
         assert "logged_in" not in session
 
 
-@pytest.mark.parametrize("username,password,error", [
-    ("wrong", "admin", b"Invalid username"),
-    ("admin", "wrong", b"Invalid password"),
-    ("", "", b"Invalid username"),
-])
+@pytest.mark.parametrize(
+    "username,password,error",
+    [
+        ("wrong", "admin", b"Invalid username"),
+        ("admin", "wrong", b"Invalid password"),
+        ("", "", b"Invalid username"),
+    ],
+)
 def test_invalid_login(client, username, password, error):
     response = client.post("/login", data={"username": username, "password": password})
     assert error in response.data
@@ -52,7 +56,8 @@ def test_invalid_login(client, username, password, error):
 
 def test_messages(logged_in, app):
     response = logged_in.post(
-        "/add", data={"title": "<Hello>", "text": "<strong>HTML</strong> allowed here"},
+        "/add",
+        data={"title": "<Hello>", "text": "<strong>HTML</strong> allowed here"},
         follow_redirects=True,
     )
     assert b"New entry was successfully posted" in response.data
@@ -63,15 +68,22 @@ def test_messages(logged_in, app):
 
 
 def test_post_requires_login(client, app):
-    assert client.post("/add", data={"title": "Blocked", "text": "No"}).status_code == 401
+    assert (
+        client.post("/add", data={"title": "Blocked", "text": "No"}).status_code == 401
+    )
     with app.app_context():
         assert db.session.scalars(db.select(Post)).all() == []
 
 
-@pytest.mark.parametrize("data", [
-    {}, {"title": "", "text": "Body"}, {"title": "Title", "text": "   "},
-    {"title": "x" * 201, "text": "Body"},
-])
+@pytest.mark.parametrize(
+    "data",
+    [
+        {},
+        {"title": "", "text": "Body"},
+        {"title": "Title", "text": "   "},
+        {"title": "x" * 201, "text": "Body"},
+    ],
+)
 def test_reject_invalid_post(logged_in, app, data):
     assert logged_in.post("/add", data=data).status_code == 400
     with app.app_context():
@@ -103,9 +115,16 @@ def test_delete_nonexistent_message(logged_in):
 
 
 def test_html_sanitized(logged_in):
-    logged_in.post("/add", data={
-        "title": "Safe title", "text": '<strong>OK</strong><script>alert(1)</script><img src=x onerror=alert(2)>',
-    })
+    logged_in.post(
+        "/add",
+        data={
+            "title": "Safe title",
+            "text": (
+                "<strong>OK</strong><script>alert(1)</script>"
+                "<img src=x onerror=alert(2)>"
+            ),
+        },
+    )
     html = logged_in.get("/").data
     assert b"<strong>OK</strong>" in html
     assert b"<script>alert(1)</script>" not in html

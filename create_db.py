@@ -1,4 +1,5 @@
 """Create missing tables without deleting existing posts."""
+
 from app import app
 from project.extensions import db
 
